@@ -1,0 +1,109 @@
+Sample	Percent_Abundance	Reads	Species
+ERR3261720	31.73	5488815	Bacteroides
+ERR3261720	0.17	30185	Clostridium_Q symbiosum
+ERR3261720	0.18	30274	Bacteroides xylanisolvens
+ERR3261720	1.19	206665	Bacteroides ovatus
+ERR3261721	8.96	1770168	Bacteroides
+ERR3261721	0.24	46693	Clostridium_Q symbiosum
+ERR3261721	0.76	150407	Bacteroides xylanisolvens
+ERR3261721	1.51	297875	Bacteroides ovatus
+ERR3261722	8.52	1399249	Bacteroides
+ERR3261722	0.02	3311	Clostridium_Q symbiosum
+ERR3261722	0.05	8872	Bacteroides xylanisolvens
+ERR3261722	0.13	20938	Bacteroides ovatus
+ERR3261723	37.42	7780861	Bacteroides
+ERR3261723	0	667	Clostridium_Q symbiosum
+ERR3261723	0.72	149217	Bacteroides xylanisolvens
+ERR3261723	4.02	835313	Bacteroides ovatus
+ERR3261724	3.38	505320	Bacteroides
+ERR3261724	0	32	Clostridium_Q symbiosum
+ERR3261724	0.79	117497	Bacteroides xylanisolvens
+ERR3261724	0.15	22361	Bacteroides ovatus
+ERR3261725	25.65	5141632	Bacteroides
+ERR3261725	0.25	49361	Clostridium_Q symbiosum
+ERR3261725	0	739	Bacteroides xylanisolvens
+ERR3261725	0	204	Bacteroides ovatus
+ERR3261726	25.56	33213982	Bacteroides
+ERR3261726	0	3775	Clostridium_Q symbiosum
+ERR3261726	0.76	989240	Bacteroides xylanisolvens
+ERR3261726	0.6	783036	Bacteroides ovatus
+ERR3261727	19.88	3254146	Bacteroides
+ERR3261727	0.01	2278	Clostridium_Q symbiosum
+ERR3261727	0.28	45638	Bacteroides xylanisolvens
+ERR3261727	0.99	162089	Bacteroides ovatus
+ERR3261728	13.51	2030599	Bacteroides
+ERR3261728	0.07	10073	Clostridium_Q symbiosum
+ERR3261728	0.1	15752	Bacteroides xylanisolvens
+ERR3261728	2.25	337735	Bacteroides ovatus
+ERR3261729	2.65	491798	Bacteroides
+ERR3261729	0.07	12904	Clostridium_Q symbiosum
+ERR3261729	0.01	2692	Bacteroides xylanisolvens
+ERR3261729	0.11	20229	Bacteroides ovatus
+ERR3261730	11.07	2383226	Bacteroides
+ERR3261730	0.04	7686	Clostridium_Q symbiosum
+ERR3261730	0.24	52492	Bacteroides xylanisolvens
+ERR3261730	1.05	226811	Bacteroides ovatus
+ERR3261731	7.09	1390286	Bacteroides
+ERR3261731	0.07	13717	Clostridium_Q symbiosum
+ERR3261731	0.16	31622	Bacteroides xylanisolvens
+ERR3261731	0.24	46224	Bacteroides ovatus
+ERR3261732	8.17	1739975	Bacteroides
+ERR3261732	0	33	Clostridium_Q symbiosum
+ERR3261732	0.24	52070	Bacteroides xylanisolvens
+ERR3261732	0.87	184837	Bacteroides ovatus
+ERR3261733	4.27	857150	Bacteroides
+ERR3261733	0	36	Clostridium_Q symbiosum
+ERR3261733	0.41	81650	Bacteroides xylanisolvens
+ERR3261733	0.45	89734	Bacteroides ovatus
+ERR3261734	12.35	2808412	Bacteroides
+ERR3261734	1	226762	Clostridium_Q symbiosum
+ERR3261734	0.28	63757	Bacteroides xylanisolvens
+ERR3261734	1.5	341156	Bacteroides ovatus
+ERR3261735	24.72	5138597	Bacteroides
+ERR3261735	0.03	7208	Clostridium_Q symbiosum
+ERR3261735	0.17	36259	Bacteroides xylanisolvens
+ERR3261735	0.5	102955	Bacteroides ovatus
+ERR3261736	10.09	1630014	Bacteroides
+ERR3261736	0	302	Clostridium_Q symbiosum
+ERR3261736	0.33	52911	Bacteroides xylanisolvens
+ERR3261736	3.66	590641	Bacteroides ovatus
+ERR3261737	5.35	1060269	Bacteroides
+ERR3261737	0	55	Clostridium_Q symbiosum
+ERR3261737	0.25	49079	Bacteroides xylanisolvens
+ERR3261737	0.2	38717	Bacteroides ovatus
+ERR3261738	1.1	212034	Bacteroides
+ERR3261738	0	101	Clostridium_Q symbiosum
+ERR3261738	0.07	14339	Bacteroides xylanisolvens
+ERR3261738	0.05	9410	Bacteroides ovatus
+ERR3261739	3.02	527119	Bacteroides
+ERR3261739	0.06	10384	Clostridium_Q symbiosum
+ERR3261739	0.07	12721	Bacteroides xylanisolvens
+ERR3261739	0.17	28873	Bacteroides ovatus
+ERR3261740	7.11	1320152	Bacteroides
+ERR3261740	0	329	Clostridium_Q symbiosum
+ERR3261740	0.15	28495	Bacteroides xylanisolvens
+ERR3261740	1.5	278420	Bacteroides ovatus
+ERR3261741	23.92	4236099	Bacteroides
+ERR3261741	0	303	Clostridium_Q symbiosum
+ERR3261741	0.16	28368	Bacteroides xylanisolvens
+ERR3261741	2.52	446894	Bacteroides ovatus
+ERR3261742	20.15	3648571	Bacteroides
+ERR3261742	0.36	64352	Clostridium_Q symbiosum
+ERR3261742	0.02	2728	Bacteroides xylanisolvens
+ERR3261742	0.18	32332	Bacteroides ovatus
+ERR3261743	10.61	2031992	Bacteroides
+ERR3261743	0	511	Clostridium_Q symbiosum
+ERR3261743	0.19	35866	Bacteroides xylanisolvens
+ERR3261743	0.24	46072	Bacteroides ovatus
+ERR3261744	11.29	2612897	Bacteroides
+ERR3261744	0	21	Clostridium_Q symbiosum
+ERR3261744	0.59	136955	Bacteroides xylanisolvens
+ERR3261744	0.96	221821	Bacteroides ovatus
+ERR3261745	7.83	1390809	Bacteroides
+ERR3261745	0.09	16072	Clostridium_Q symbiosum
+ERR3261745	0.04	7271	Bacteroides xylanisolvens
+ERR3261745	0.1	17464	Bacteroides ovatus
+ERR3261747	33.07	7023550	Bacteroides
+ERR3261747	1.52	322015	Clostridium_Q symbiosum
+ERR3261747	0.44	93235	Bacteroides xylanisolvens
+ERR3261747	4.58	972762	Bacteroides ovatus

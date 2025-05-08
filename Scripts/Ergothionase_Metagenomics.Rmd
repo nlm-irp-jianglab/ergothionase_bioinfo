@@ -1,0 +1,106 @@
+---
+title: "Metagenomics Ergothionase"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+library(ggplot2)
+library(dplyr)
+library(tidyr)
+library(tibble)
+library(ggpubr)
+library(rstudioapi)
+```
+
+## Load Data
+```{r load-data}
+df <- read.table("../Tables/Fig_Metagenomics_Data.tsv", sep="\t", header=TRUE)
+```
+
+## Define Groups
+```{r define-groups}
+df$Presence <- ifelse(df$EGT.d9 <= 10, "Active", "Inactive")
+df$Gene <- ifelse(df$CPM >= 1, "Present", "Absent")
+```
+
+## Grouping by metabolic activity
+```{r summarize}
+gene_summary <- df %>%
+  group_by(Presence, Gene) %>%
+  summarise(Count = n(), .groups = "drop") %>%
+  group_by(Presence)
+```
+
+## Bar Plot of Association of Ergothionase Presence to Egt levels
+```{r barplot}
+p <- ggplot(gene_summary, aes(x = Presence, y = Count, fill = Gene)) +
+  geom_bar(stat = "identity") +
+  scale_fill_manual(values = c("Present" = "#ff2600", "Absent" = "gray")) +
+  labs(x = "Ergothionase Activity", y = "Count") +
+  theme_classic() +
+  guides(fill = guide_legend(title = "Ergothionase")) +
+  theme(
+    axis.text.x = element_text(angle = 45, hjust = 1, family = "Arial"),
+    legend.position = "none",
+    axis.title = element_text(size = 6, family = "Arial"),
+    axis.text = element_text(size = 6, family = "Arial"),
+    plot.title = element_text(size = 6, family = "Arial"),
+    legend.title = element_text(size = 6, family = "Arial"),
+    legend.text = element_text(size = 6, family = "Arial")
+  )
+p
+ggsave("Fig_Bar.svg", plot = p, device = "svg", width = 89 / 25.4 * 0.5, height = 89 * 0.5 / 25.4, units = "in")
+```
+
+## Fisher's Exact Test
+```{r fisher-test}
+ergo_matrix <- gene_summary %>%
+  pivot_wider(names_from = Presence, values_from = Count) %>%
+  column_to_rownames("Gene")
+ergo_matrix[is.na(ergo_matrix)] <- 0
+
+fisher_result <- fisher.test(as.matrix(ergo_matrix), alternative = "less")
+fisher_result
+```
+
+## CPM and ergothionase activity level box plot
+```{r final-plot}
+df$Presence <- factor(df$Presence, levels = c(
+  "Inactive",
+  "Active"
+))
+
+p2 <- ggplot(df, aes(x = Presence, y = CPM + 0.01)) +
+  geom_boxplot(fill = NA, color = "black", width = 0.4) +
+  geom_jitter(aes(color = Presence), width = 0.1, size = 0.8, alpha = 0.6) +
+  scale_color_manual(values = c("Active" = "#ff2600", "Inactive" = "darkgray")) +
+  scale_y_log10() +
+  labs(x = "Ergothionase Activity", y = "log10(cpm)") +
+  stat_compare_means(
+    method = "wilcox.test",
+    method.args = list(alternative = "greater"),
+    comparisons = list(c("Active", "Inactive")),
+    label = "p.format",
+    size = 3
+  ) +
+  theme_classic() +
+  theme(
+    legend.position = "none",
+    axis.text.x = element_text(angle = 45, hjust = 1, family = "Arial"),
+    axis.title = element_text(size = 6, family = "Arial"),
+    axis.text = element_text(size = 6, family = "Arial"),
+    plot.title = element_text(size = 6, family = "Arial"),
+    legend.title = element_text(size = 6, family = "Arial"),
+    legend.text = element_text(size = 6, family = "Arial")
+  )
+p2
+ggsave("Fig_Box.svg", plot = p2, device = "svg", width = 89 * 0.5 / 25.4, height = 89 * 0.5 / 25.4, units = "in")
+
+```
+
+
+## Wilcoxon Rank-Sum Test on cpm vs detected activity
+```{r wilcox-test}
+wilcox_result <- wilcox.test(CPM ~ Presence, data = df, alternative = "less")
+wilcox_result
+```

@@ -1,0 +1,300 @@
+---
+title: "Ergothionase Species Abundance Analysis"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+library(ggplot2)
+library(dplyr)
+library(tidyr)
+library(tibble)
+library(ggpubr)
+library(patchwork)
+```
+
+## Load Data
+```{r load-data}
+df <- read.table("../Tables/Fig_Abundance_Data.tsv", sep="\t", header=TRUE)
+metadata <- read.table("../Tables/Metadata.txt", sep="\t", header=TRUE)
+merged <- merge(df, metadata, by="Sample")
+
+merged$Category <- factor(merged$Category, levels = c(
+  "No ergothionase activity",
+  "Ergothionase activity only",
+  "Ergothionase and TUA reductase activity"
+))
+```
+
+## Subset Data
+```{r subset}
+bacteroides <- merged %>% filter(Species == "Bacteroides")
+ovatus <- merged %>% filter(Species == "Bacteroides ovatus")
+xylanisolvens <- merged %>% filter(Species == "Bacteroides xylanisolvens")
+sym <- merged %>% filter(Species == "Clostridium_Q symbiosum")
+```
+
+## Process data
+```{r tua-summary}
+
+# sum up TUA reducer species
+tua_reducers <- merged %>%
+  mutate(`TUA-reducers abundance` = ifelse(
+    Species %in% c("Bacteroides ovatus", "Bacteroides xylanisolvens"),
+    Percent_Abundance, 0)) %>%
+  group_by(Sample) %>%
+  summarise(`TUA-reducers abundance` = sum(`TUA-reducers abundance`))
+
+tua_reducers <- merge(tua_reducers, metadata, by="Sample")
+tua_reducers$Category <- factor(tua_reducers$Category, levels = levels(merged$Category))
+
+# for 2 category plot (TUA reducer vs non TUA reducer)
+tua_reducers_2 <- tua_reducers %>%
+  mutate(Presence = ifelse(Category == "Ergothionase and TUA reductase activity", "TUA reductase activity", "No TUA reductase activity"))
+
+ovatus_tua_reducers_2 <- ovatus %>%
+  mutate(Presence = ifelse(Category == "Ergothionase and TUA reductase activity", "TUA reductase activity", "No TUA reductase activity"))
+
+xy_tua_reducers_2 <- xylanisolvens %>%
+  mutate(Presence = ifelse(Category == "Ergothionase and TUA reductase activity", "TUA reductase activity", "No TUA reductase activity"))
+
+bacteroides_tua_reducers_2 <- bacteroides %>%
+  mutate(Presence = ifelse(Category == "Ergothionase and TUA reductase activity", "TUA reductase activity", "No TUA reductase activity"))
+
+sym_2 <- sym %>%
+  mutate(Presence = ifelse(Category == "No ergothionase activity", "No ergothionase activity", "Ergothionase activity"))
+
+```
+
+## Plot theme
+```{r custom-theme}
+custom_theme <- theme_classic() +
+  theme(
+    legend.position = "none",
+    axis.text.x = element_text(angle = 70, hjust = 1, size = 8, family = "Arial"),
+    axis.title = element_text(size = 8, family = "Arial"),
+    axis.text = element_text(size = 8, family = "Arial"),
+    plot.title = element_text(size = 8, family = "Arial"),
+    legend.title = element_text(size = 8, family = "Arial"),
+    legend.text = element_text(size = 8, family = "Arial")
+  )
+color_map <- c(
+  "No ergothionase activity" = "gray",
+  "Ergothionase activity only" = "#ff2600",
+  "Ergothionase and TUA reductase activity" = "#0095ff"
+)
+
+custom_theme_tua <- theme_classic() +
+  theme(
+    legend.position = "none",
+    axis.text.x = element_text(angle = 70, hjust = 1, size = 8, family = "Arial"),
+    axis.title = element_text(size = 8, family = "Arial"),
+    axis.text = element_text(size = 8, family = "Arial"),
+    plot.title = element_text(size = 8, family = "Arial"),
+    legend.title = element_text(size = 8, family = "Arial"),
+    legend.text = element_text(size = 8, family = "Arial")
+  )
+color_map_TUA <- c(
+    "No TUA reductase activity" = "gray",
+    "TUA reductase activity" = "#0095ff"
+)
+```
+
+## Plot: Clostridium symbiosum 3 categories
+```{r plot-sym}
+p1 <- ggplot(sym, aes(x = Category, y = Percent_Abundance)) +
+  geom_boxplot(fill = NA, color = "black", width = 0.4, outlier.shape = NA) +
+  geom_jitter(aes(color = Category), width = 0.1, size = 0.5, alpha = 0.6) +
+  scale_color_manual(values = color_map) +
+  labs(y = "Percent Abundance") +
+  custom_theme
+p1
+
+ggsave("Fig_Sym_Bar_3.svg", plot = p1, device = "svg", width = 89 * 0.5 / 25.4, height = 89 / 25.4, units = "in")
+```
+
+## Plot: Bacteroides 3 categories
+```{r plot-sym}
+p2 <- ggplot(bacteroides, aes(x = Category, y = Percent_Abundance)) +
+  geom_boxplot(fill = NA, color = "black", width = 0.4, outlier.shape = NA) +
+  geom_jitter(aes(color = Category), width = 0.1, size = 0.5, alpha = 0.6) +
+  scale_color_manual(values = color_map) +
+  labs(y = "Percent Abundance") +
+  custom_theme
+p2
+
+ggsave("Fig_Bacteroides_Bar_3.svg", plot = p2, device = "svg", width = 89 * 0.5 / 25.4, height = 89 / 25.4, units = "in")
+```
+
+## Plot: Bacteroides xylanisolvens 3 categories
+```{r plot-ov}
+p3 <- ggplot(xylanisolvens, aes(x = Category, y = Percent_Abundance)) +
+  geom_boxplot(fill = NA, color = "black", width = 0.4, outlier.shape = NA) +
+  geom_jitter(aes(color = Category), width = 0.1, size = 0.5, alpha = 0.6) +
+  scale_color_manual(values = color_map) +
+  labs(y = "Percent Abundance") +
+  custom_theme
+p3
+
+ggsave("Fig_xyl_Bar_3.svg", plot = p3, device = "svg", width = 89 * 0.5 / 25.4, height = 89 / 25.4, units = "in")
+```
+
+## Plot: Bacteroides ovatus 3 categories
+```{r plot-ov}
+p4 <- ggplot(ovatus, aes(x = Category, y = Percent_Abundance)) +
+  geom_boxplot(fill = NA, color = "black", width = 0.4, outlier.shape = NA) +
+  geom_jitter(aes(color = Category), width = 0.1, size = 0.5, alpha = 0.6) +
+  scale_color_manual(values = color_map) +
+  labs(y = "Percent Abundance") +
+  custom_theme
+p4
+
+ggsave("Fig_ovatus_Bar_3.svg", plot = p4, device = "svg", width = 89 * 0.5 / 25.4, height = 89 / 25.4, units = "in")
+```
+
+
+## TUA Reducer 3 categories
+```{r tua-plot}
+p5 <- ggplot(tua_reducers, aes(x = Category, y = `TUA-reducers abundance`)) +
+  geom_boxplot(fill = NA, color = "black", width = 0.4, outlier.shape = NA) +
+  geom_jitter(aes(color = Category), width = 0.1, size = 0.5, alpha = 0.6) +
+  scale_color_manual(values = color_map) +
+  labs(y = "Percent Abundance") +
+  custom_theme
+p5
+
+ggsave("Fig_TUA_reducers_Bar_3.svg", plot = p5, device = "svg", width = 89 * 0.5 / 25.4, height = 89 / 25.4, units = "in")
+
+```
+
+## Bacteroides 2 categories 
+```{r tua-plot}
+p6 <- ggplot(bacteroides_tua_reducers_2, aes(x = Presence, y = Percent_Abundance)) +
+  geom_boxplot(fill = NA, color = "black", width = 0.4, outlier.shape = NA) +
+  geom_jitter(aes(color = Presence), width = 0.1, size = 0.5, alpha = 0.6) +
+  scale_color_manual(values = color_map_TUA) +
+  labs(y = "Percent Abundance") +
+  custom_theme_tua
+p6
+
+ggsave("Fig_Bacteroides_2.svg", plot = p6, device = "svg", width = 89 * 0.5 / 25.4, height = 89 * 0.8 * 1.052 / 25.4, units = "in")
+
+```
+
+## Bacteroides ovatus 2 categories 
+```{r ova-2-plot}
+p7 <- ggplot(ovatus_tua_reducers_2, aes(x = Presence, y = Percent_Abundance)) +
+  geom_boxplot(fill = NA, color = "black", width = 0.4, outlier.shape = NA) +
+  geom_jitter(aes(color = Presence), width = 0.1, size = 0.5, alpha = 0.6) +
+  scale_color_manual(values = color_map_TUA) +
+  labs(y = "Percent Abundance") +
+  custom_theme_tua
+p7
+
+ggsave("Fig_ovatus_2.svg", plot = p7, device = "svg", width = 89 * 0.5 / 25.4, height = 89 * 0.8 * 1.052 / 25.4, units = "in")
+
+```
+
+## Bacteroides xyl 2 categories
+```{r xyl-2-plot}
+p8 <- ggplot(xy_tua_reducers_2, aes(x = Presence, y = Percent_Abundance)) +
+  geom_boxplot(fill = NA, color = "black", width = 0.4, outlier.shape = NA) +
+  geom_jitter(aes(color = Presence), width = 0.1, size = 0.5, alpha = 0.6) +
+  scale_color_manual(values = color_map_TUA) +
+  labs(y = "Percent Abundance") +
+  custom_theme_tua
+p8
+
+ggsave("Fig_xyl_2.svg", plot = p8, device = "svg", width = 89 * 0.5 / 25.4, height = 89 * 0.8 * 1.052 / 25.4, units = "in")
+
+```
+
+## Clostridium symbiosum 2 categories
+```{r sym-2-plot}
+sym_2$Presence <- factor(sym_2$Presence, levels = c(
+  "No ergothionase activity",
+  "Ergothionase activity"
+))
+
+p9 <- ggplot(sym_2, aes(x = Presence, y = Percent_Abundance)) +
+  geom_boxplot(fill = NA, color = "black", width = 0.4, outlier.shape = NA) +
+  geom_jitter(aes(color = Presence), width = 0.1, size = 0.5, alpha = 0.6) +
+  scale_color_manual(values = c(
+    "No ergothionase activity" = "gray",
+    "Ergothionase activity" = "#ff2600"
+  )) +
+  labs(y = "Percent Abundance") +
+  custom_theme_tua
+p9
+
+ggsave("Fig_sym_2.svg", plot = p8, device = "svg", width = 89 * 0.5 / 25.4, height = 89 * 0.8 * 1.052 / 25.4, units = "in")
+
+```
+
+
+## Bacteroides ovatus 2 categories
+```{r ovatus-2-plot}
+p10 <- ggplot(tua_reducers_2, aes(x = Presence, y = `TUA-reducers abundance`)) +
+  geom_boxplot(fill = NA, color = "black", width = 0.4, outlier.shape = NA) +
+  geom_jitter(aes(color = Presence), width = 0.1, size = 0.5, alpha = 0.6) +
+  scale_color_manual(values = color_map_TUA) +
+  labs(y = "Percent Abundance") +
+  custom_theme_tua
+p10
+
+ggsave("Fig_TUA_reducers_2.svg", plot = p10, device = "svg", width = 89 * 0.5 / 25.4, height = 89 * 0.8 * 1.052 / 25.4, units = "in")
+
+```
+
+## Combining Plots
+
+```{r, fig.width=5, fig.height=10}
+
+combined <- (p2 + p5 + p4 + p3 + p6 + p10 + p7 + p8 + p1+ p9) &
+  theme(
+    axis.title.x = element_blank(),
+    axis.title.y = element_blank()
+  )
+
+print(combined)
+
+ggsave("Fig_all_reducers.svg", plot = combined, device = "svg", width = 5, height = 10, units = "in")
+
+```
+
+## Statistical Tests
+```{r wilcox-tests}
+
+# Bacteroides 3 categories ANOVA
+bacteroides_aov <- aov(Percent_Abundance ~ Category, data = bacteroides)
+summary(bacteroides_aov)
+
+# C. symbiosum 3 categories ANOVA
+sym_aov <- aov(Percent_Abundance ~ Category, data = sym)
+summary(sym_aov)
+
+# B. ovatus 3 categories ANOVA
+ovatus_aov <- aov(Percent_Abundance ~ Category, data = ovatus)
+summary(ovatus_aov)
+
+# B. xylanisolvens 3 categories ANOVA
+xylanisolvens_aov <- aov(Percent_Abundance ~ Category, data = xylanisolvens)
+summary(xylanisolvens_aov)
+
+# Bacteroides Wilcox rank sum test 
+bacteroides_wilcox <- wilcox.test(Percent_Abundance ~ Presence, data = bacteroides_tua_reducers_2, alternative="less")
+bacteroides_wilcox
+
+# C. symbiosum Wilcox rank sum test 
+sym_wilcox <- wilcox.test(Percent_Abundance ~ Presence, data = sym_2, alternative="less")
+sym_wilcox
+
+# B. ovatus Wilcox rank sum test 
+ovatus_wilcox <- wilcox.test(Percent_Abundance ~ Presence, data = ovatus_tua_reducers_2, alternative="less")
+ovatus_wilcox
+
+# B. xylanisolvens Wilcox rank sum test 
+xy_wilcox <- wilcox.test(Percent_Abundance ~ Presence, data = xy_tua_reducers_2, alternative="less")
+xy_wilcox
+
+```
+

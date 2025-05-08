@@ -1,0 +1,30 @@
+MV_ID	Sample	Comm_no	Category
+MV01 	ERR3261720	1	Ergothionase and TUA reductase activity
+MV02	ERR3261721	2	Ergothionase activity only
+MV03	ERR3261722	3	Ergothionase and TUA reductase activity
+MV04	ERR3261723	4	Ergothionase activity only
+MV05	ERR3261724	5	Ergothionase activity only
+MV06	ERR3261725	6	Ergothionase activity only
+MV07	ERR3261726	7	Ergothionase and TUA reductase activity
+MV08	ERR3261727	8	No ergothionase activity
+MV09	ERR3261728	9	Ergothionase activity only
+MV10	ERR3261729	10	Ergothionase and TUA reductase activity
+MV11	ERR3261730	11	No ergothionase activity
+MV12	ERR3261731	12	Ergothionase activity only
+MV13	ERR3261732	13	No ergothionase activity
+MV14	ERR3261733	14	Ergothionase activity only
+MV15	ERR3261734	15	Ergothionase and TUA reductase activity
+MV16	ERR3261735	16	No ergothionase activity
+MV17	ERR3261736	17	No ergothionase activity
+MV18	ERR3261737	18	No ergothionase activity
+MV19	ERR3261738	Not included	Ergothionase activity only
+MV20	ERR3261739	Not included	Ergothionase activity only
+MV21	ERR3261740	19	Ergothionase and TUA reductase activity
+MV22	ERR3261741	20	Ergothionase and TUA reductase activity
+MV23	ERR3261742	Not included	Ergothionase activity only
+MV24	ERR3261743	21	Ergothionase activity only
+MV25	ERR3261744	Not included	Ergothionase activity only
+MV26	ERR3261745	22	Ergothionase activity only
+MV27	ERR3261746	Not included	Ergothionase activity only
+MV28	ERR3261747	23	Ergothionase and TUA reductase activity
+MV29	Not included in the metagenomics depository database	24	Ergothionase activity only
