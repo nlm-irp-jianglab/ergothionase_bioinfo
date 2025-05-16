@@ -1,0 +1,123 @@
+---
+title: "ibd_ergothionase"
+author: "Angela Jiang"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(ggplot2)
+library(dplyr)
+library(sjPlot)
+library(ggdist)
+
+```
+
+## R Markdown
+
+### Read in files
+
+```{r read}
+ibd_mgx = read.csv("../Tables/Fig_CRC_Data.tsv", sep="\t")
+```
+
+### Process data
+
+Removing duplicates, remove samples with <1mil reads, normalizing by calculating count per million
+
+```{r process}
+ibd_mgx_processed <- ibd_mgx %>%
+  filter(Total.Reads >= 1000000) 
+
+
+
+```
+
+### Normality test
+```{r normality, echo=FALSE}
+shapiro.test(ibd_mgx_processed$CPM)
+
+```
+
+### MGX plot
+
+Plotting MGX data
+
+```{r mgx_plot, echo=FALSE}
+ibd_mgx_processed$diagnosis <- factor(ibd_mgx_processed$diagnosis, levels = c(
+  "healthy",
+  "adenoma",
+  "CRC"
+))
+
+p <- ggplot(ibd_mgx_processed, aes(x = diagnosis, y = CPM + 0.01, color = diagnosis)) +
+  geom_jitter(width = 0.1, size = 1, alpha = 0.5, shape = 16) +
+  geom_boxplot(width = 0.5, color = "black", alpha = 0.2, outlier.shape = NA, fill = NA) +
+  scale_color_brewer(palette = "Dark2") +
+  scale_y_log10() +
+  xlab("Diagnosis") +
+  ylab("CPM") +
+  theme_classic()
+
+
+p
+
+ggsave(file="Plots/ibd_crc_ergothionase.svg", plot=p, width=4, height=4)
+
+
+```
+
+```{r}
+gene_summary <- ibd_mgx_processed %>%
+  mutate(Gene = ifelse(cpm >= 1.5, "Present", "Absent")) %>%
+  group_by(diagnosis, Gene) %>%
+  summarise(Count = n(), .groups = "drop") %>%
+  group_by(diagnosis) %>%
+  mutate(Percentage = Count / sum(Count) * 100)
+
+```
+
+```
+### Filter data into comparison groups
+
+```{r mtx_stat, echo=FALSE}
+
+#MGX
+CRCvsHealthy_mgx <- ibd_mgx_processed %>%
+  filter(diagnosis == "CRC" | diagnosis == "healthy")
+
+AdenomavsHealthy_mgx <- ibd_mgx_processed %>%
+  filter(diagnosis == "adenoma" | diagnosis == "healthy")
+
+CRCvsAdenoma_mgx <- ibd_mgx_processed %>%
+  filter(diagnosis == "CRC" | diagnosis == "adenoma")
+  
+df["diagnosis"].value_counts()
+```
+
+## MGX stats
+### CRC vs healthy MGX wilcox test
+
+```{r mgx_uc_nonibd, echo=FALSE}
+wilcox.test(CPM~ diagnosis, 
+            data = CRCvsHealthy_mgx,
+            exact = FALSE, alternative="less")
+```
+
+### Adenoma vs healthy MGX wilcox test
+
+```{r AdenomavsHealthy_mgx, echo=FALSE}
+wilcox.test(CPM~ diagnosis, 
+            data = AdenomavsHealthy_mgx,
+            exact = FALSE, alternative="less")
+```
+
+### CRC vs UC Adenoma wilcox test
+
+```{r CRCvsAdenoma_mgx, echo=FALSE}
+wilcox.test(CPM~ diagnosis, 
+            data = CRCvsAdenoma_mgx,
+            exact = FALSE)
+```
+
