@@ -19,7 +19,7 @@ library(ggdist)
 ### Read in files
 
 ```{r read}
-ibd_mgx = read.csv("../Tables/Fig_CRC_Data.tsv", sep="\t")
+crc_mgx = read.csv("../Tables/Fig_CRC_Data.tsv", sep="\t")
 ```
 
 ### Process data
@@ -27,7 +27,7 @@ ibd_mgx = read.csv("../Tables/Fig_CRC_Data.tsv", sep="\t")
 Removing duplicates, remove samples with <1mil reads, normalizing by calculating count per million
 
 ```{r process}
-ibd_mgx_processed <- ibd_mgx %>%
+crc_mgx_processed <- crc_mgx %>%
   filter(Total.Reads >= 1000000) 
 
 
@@ -36,7 +36,7 @@ ibd_mgx_processed <- ibd_mgx %>%
 
 ### Normality test
 ```{r normality, echo=FALSE}
-shapiro.test(ibd_mgx_processed$CPM)
+shapiro.test(crc_mgx_processed$CPM)
 
 ```
 
@@ -45,13 +45,13 @@ shapiro.test(ibd_mgx_processed$CPM)
 Plotting MGX data
 
 ```{r mgx_plot, echo=FALSE}
-ibd_mgx_processed$diagnosis <- factor(ibd_mgx_processed$diagnosis, levels = c(
+crc_mgx_processed$diagnosis <- factor(crc_mgx_processed$diagnosis, levels = c(
   "healthy",
   "adenoma",
   "CRC"
 ))
 
-p <- ggplot(ibd_mgx_processed, aes(x = diagnosis, y = CPM + 0.01, color = diagnosis)) +
+p <- ggplot(crc_mgx_processed, aes(x = diagnosis, y = CPM + 0.01, color = diagnosis)) +
   geom_jitter(width = 0.1, size = 1, alpha = 0.5, shape = 16) +
   geom_boxplot(width = 0.5, color = "black", alpha = 0.2, outlier.shape = NA, fill = NA) +
   scale_color_brewer(palette = "Dark2") +
@@ -68,32 +68,21 @@ ggsave(file="Plots/ibd_crc_ergothionase.svg", plot=p, width=4, height=4)
 
 ```
 
-```{r}
-gene_summary <- ibd_mgx_processed %>%
-  mutate(Gene = ifelse(cpm >= 1.5, "Present", "Absent")) %>%
-  group_by(diagnosis, Gene) %>%
-  summarise(Count = n(), .groups = "drop") %>%
-  group_by(diagnosis) %>%
-  mutate(Percentage = Count / sum(Count) * 100)
-
-```
-
 ```
 ### Filter data into comparison groups
 
 ```{r mtx_stat, echo=FALSE}
 
 #MGX
-CRCvsHealthy_mgx <- ibd_mgx_processed %>%
+CRCvsHealthy_mgx <- crc_mgx_processed %>%
   filter(diagnosis == "CRC" | diagnosis == "healthy")
 
-AdenomavsHealthy_mgx <- ibd_mgx_processed %>%
+AdenomavsHealthy_mgx <- crc_mgx_processed %>%
   filter(diagnosis == "adenoma" | diagnosis == "healthy")
 
-CRCvsAdenoma_mgx <- ibd_mgx_processed %>%
+CRCvsAdenoma_mgx <- crc_mgx_processed %>%
   filter(diagnosis == "CRC" | diagnosis == "adenoma")
   
-df["diagnosis"].value_counts()
 ```
 
 ## MGX stats
