@@ -11,6 +11,7 @@ library(ggplot2)
 library(dplyr)
 library(sjPlot)
 library(ggdist)
+library(ggpubr)
 
 ```
 
@@ -19,7 +20,7 @@ library(ggdist)
 ### Read in files
 
 ```{r read}
-crc_mgx = read.csv("../Tables/Fig_CRC_Data.tsv", sep="\t")
+crc_mgx = read.csv("../Tables/diagnosis_crc_reads_all.tsv", sep="\t")
 ```
 
 ### Process data
@@ -28,7 +29,8 @@ Removing duplicates, remove samples with <1mil reads, normalizing by calculating
 
 ```{r process}
 crc_mgx_processed <- crc_mgx %>%
-  filter(Total.Reads >= 1000000) 
+  filter(Total.Reads >= 1000000) %>%
+  drop_na(diagnosis)
 
 
 
@@ -46,24 +48,65 @@ Plotting MGX data
 
 ```{r mgx_plot, echo=FALSE}
 crc_mgx_processed$diagnosis <- factor(crc_mgx_processed$diagnosis, levels = c(
-  "healthy",
+  "control",
   "adenoma",
   "CRC"
 ))
 
-p <- ggplot(crc_mgx_processed, aes(x = diagnosis, y = CPM + 0.01, color = diagnosis)) +
+comparisons <- list(
+  c("CRC", "control"),
+  c("adenoma", "control"),
+  c("CRC", "adenoma")
+)
+
+all_groups_studies <- crc_mgx_processed %>%
+  filter(Study == "FengQ_2015" | Study == "Zeller_2014")
+
+two_groups_studies <- crc_mgx_processed %>%
+    filter(Study == "Vogtmann_2016" | Study == "YuJ_2015")
+
+p <- ggplot(all_groups_studies, aes(x = diagnosis, y = CPM + 0.01, color = diagnosis)) +
   geom_jitter(width = 0.1, size = 1, alpha = 0.5, shape = 16) +
   geom_boxplot(width = 0.5, color = "black", alpha = 0.2, outlier.shape = NA, fill = NA) +
   scale_color_brewer(palette = "Dark2") +
   scale_y_log10() +
   xlab("Diagnosis") +
   ylab("CPM") +
-  theme_classic()
+  theme_classic() +
+  facet_wrap(~ Study) +
+  stat_compare_means(
+    comparisons = comparisons,
+    method = "wilcox.test",
+    method.args = list(alternative = "greater"),
+    label = "p.signifi",
+    tip.length = 0.01,
+size = 3 
+  )
+
+p2 <- ggplot(two_groups_studies, aes(x = diagnosis, y = CPM + 0.01, color = diagnosis)) +
+  geom_jitter(width = 0.1, size = 1, alpha = 0.5, shape = 16) +
+  geom_boxplot(width = 0.5, color = "black", alpha = 0.2, outlier.shape = NA, fill = NA) +
+  scale_color_brewer(palette = "Dark2") +
+  scale_y_log10() +
+  xlab("Diagnosis") +
+  ylab("CPM") +
+  theme_classic() +
+  facet_wrap(~ Study) +
+  stat_compare_means(
+    comparisons = list(c("CRC", "control")),  # ← this must be a list of length-2 vectors
+    method = "wilcox.test",
+    method.args = list(alternative = "greater"),
+    label = "p.signifi",
+    tip.length = 0.01,
+    size = 3 )
 
 
-p
 
-ggsave(file="Plots/ibd_crc_ergothionase.svg", plot=p, width=4, height=4)
+p_all<- p / p2
+
+p_all
+
+ggsave(file="../../Plots/CRC_ergothionase_all.png", plot=p_all, width=6, height=7)
 
 
 ```
